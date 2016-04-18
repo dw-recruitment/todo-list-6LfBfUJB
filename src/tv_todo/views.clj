@@ -49,10 +49,18 @@
                       (form/text-field "todo")
                       (form/submit-button "Add Todo"))])
 
+(defn striker [completed]
+  (if completed 
+    "text-decoration: line-through;" ""))
+
 (defn todos-index []
   [:div 
    todo-form
    [:ul
     (for [todo (db/query-all "todos")]
       [:li
-       [:h4 (:body todo)]])]])
+       [:h4 {:style (striker (:completed todo))} (:body todo)
+        (form/form-to [:post "/update-todo"]
+                      (form/hidden-field "id" (:id todo))
+                      (form/submit-button (if (:completed todo)
+                                            "Undo" "Mark as Done")))]])]])

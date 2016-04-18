@@ -34,6 +34,15 @@
   (:count
    (first (sql/query db [(str "select count(*) from " table-name)]))))
 
+(defn find-by-id [table-name id]
+  (first (sql/query db [(str "select * from "
+                             table-name
+                             " where id = ?") id])))
+
+(defn flip-completed [id]
+  (let [old-value (:completed (find-by-id "todos" id))]
+    (sql/update! db :todos {:completed (not old-value)} ["id = ?" id])))
+
 (defn add-dummy-data []
   (do (create-todo "first undone")
       (create-todo "second undone")

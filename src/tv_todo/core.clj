@@ -19,8 +19,11 @@
 (defn handler [request]
   (case (:uri request)
     "/" (handle-todos request)
+    "/update-todo" (do (if-let [id (read-string (parse-request request "id"))]
+                          (db/flip-completed id))
+                       (r/redirect "/"))
     "/about" (v/layout v/about)
-    "favicon.ico" (v/bad-news "")))
+    "/favicon.ico" (v/bad-news "")))
 
 (defn -main [] (do
                  (db/migrate) 
