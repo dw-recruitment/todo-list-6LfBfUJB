@@ -1,5 +1,6 @@
 (ns tv-todo.views
-  (:require [hiccup.core :as hic]))
+  (:require [hiccup.core :as hic]
+            [tv-todo.db :as db]))
 
 (defn layout [view]
   {:status 200
@@ -34,3 +35,9 @@
   [:div
    [:h2 "About This Project"]
    [:p "Post-Its are for the weak. Step into the future with this dedicated To Do List PLATFORM!"]])
+
+(defn todos-index []
+  [:ul
+   (for [todo (db/query-all "todos")]
+     [:li
+      [:h4 (:body todo)]])])

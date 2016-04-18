@@ -7,7 +7,7 @@
 
 (defn handler [request]
   (case (:uri request)
-    "/" (v/layout v/under-construction)
+    "/" (v/layout (v/todos-index))
     "/about" (v/layout v/about)))
 
 (defn -main [] (do
