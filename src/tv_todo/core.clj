@@ -35,8 +35,14 @@
          :src "http://www.animatedimages.org/data/media/1432/animated-pikachu-image-0018.gif"
          :style "height: 400px;"}])
 
+(def about
+  [:div
+   [:h2 "About This Project"]
+   [:p "Post-Its are for the weak. Step into the future with this dedicated To Do List PLATFORM!"]])
+
 (defn handler [request]
   (case (:uri request)
-    "/" (layout under-construction)))
+    "/" (layout under-construction)
+    "/about" (layout about)))
 
 (defn -main [] (jet/run-jetty handler {:port 8000}))
