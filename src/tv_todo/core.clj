@@ -18,8 +18,9 @@
 
 (defn handler [request]
   (case (:uri request)
-    "/" (handle-todos request) (v/layout (v/todos-index))
-    "/about" (v/layout v/about)))
+    "/" (handle-todos request)
+    "/about" (v/layout v/about)
+    "favicon.ico" (v/bad-news "")))
 
 (defn -main [] (do
                  (db/migrate) 

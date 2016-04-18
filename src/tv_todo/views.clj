@@ -3,6 +3,11 @@
             [hiccup.form :as form]
             [tv-todo.db :as db]))
 
+(defn bad-news [body-text]
+  {:status 404
+   :headers {}
+   :body body-text})
+
 (defn layout [view]
   {:status 200
    :headers {"Content-Type" "text/html"}
