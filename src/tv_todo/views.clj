@@ -63,4 +63,7 @@
         (form/form-to [:post "/update-todo"]
                       (form/hidden-field "id" (:id todo))
                       (form/submit-button (if (:completed todo)
-                                            "Undo" "Mark as Done")))]])]])
+                                            "Undo" "Mark as Done")))
+        (form/form-to [:post "/destroy-todo"]
+                      (form/hidden-field "id" (:id todo))
+                      (form/submit-button "Delete"))]])]])

@@ -39,6 +39,9 @@
                              table-name
                              " where id = ?") id])))
 
+(defn delete-by-id [table-name id]
+  (sql/delete! db (keyword table-name) ["id = ?" id]))
+
 (defn flip-completed [id]
   (let [old-value (:completed (find-by-id "todos" id))]
     (sql/update! db :todos {:completed (not old-value)} ["id = ?" id])))
