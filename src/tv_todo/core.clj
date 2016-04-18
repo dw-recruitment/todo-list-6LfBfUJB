@@ -12,8 +12,9 @@
 (defn handle-todos [request]
   (case (:request-method request)
     :get (v/layout (v/todos-index))
-    :post (let [body (parse-request request "todo")
-                list-id (read-string (parse-request request "list-id"))]
+    :post (let [req (codec/form-decode (slurp (:body request)))
+                body (get req "todo")
+                list-id (read-string (get req "list-id"))]
             (db/create-todo body list-id)
             (r/redirect (str "/lists/" list-id)))
     (v/bad-news "Something Done Goofed")))
@@ -36,13 +37,15 @@
 (defn handler [request]
   (case (:uri request)
     "/" (handle-lists request)
-    "/update-todo" (do (if-let [id (read-string (parse-request request "id"))]
-                          (db/flip-completed id))
-                       (r/redirect "/"))
+    "/update-todo" (let [id (read-string (parse-request request "id"))
+                         todo (db/find-by-id "todos" id)]
+                     (db/flip-completed id)
+                     (r/redirect (str "/lists/" (:list_id todo))))
     "/destroy-todo" (do (let [id (read-string (parse-request request "id"))
                               todo (db/find-by-id "todos" id)
                               list-id (:list_id todo)]
                           (db/delete-by-id "todos" id)
+                          (println list-id)
                           (r/redirect (str "/lists/" list-id))))
     "/todos" (handle-todos request)
     "/about" (v/layout v/about)
@@ -50,5 +53,5 @@
     (uri-check request)))
 
 (defn -main [] (do
-                 (db/migrate) 
+                 (db/reset-db) 
                  (jet/run-jetty handler {:port 8000})))
