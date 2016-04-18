@@ -43,11 +43,19 @@
    [:p "Post-Its are for the weak. Step into the future with this dedicated To Do List PLATFORM!"]])
 
 (def todo-form
-  [:div (form/form-to [:post "/"]
+  [:div (form/form-to [:post "/todos"]
                       (form/label "todo" "Create a Todo")
                       [:br]
                       (form/text-field "todo")
                       (form/submit-button "Add Todo"))])
+
+(defn list-todo-form [list]
+  [:div (form/form-to [:post "/todos"]
+                      (form/label "todo" (str "Add Todo to " (:name list) " list"))
+                      [:br]
+                      (form/text-field "todo")
+                      (form/hidden-field "list-id" (:id list))
+                      (form/submit-button "Add to List"))])
 
 (defn striker [completed]
   (if completed 
@@ -55,7 +63,6 @@
 
 (defn todos-list [todos]
   [:div 
-   todo-form
    [:ul
     (for [todo (db/query-all "todos")]
       [:li
@@ -69,7 +76,16 @@
                       (form/submit-button "Delete"))]])]])
 
 (defn todos-index []
-  (todos-list (db/query-all "todos")))
+  [:div
+   todo-form
+   (todos-list (db/query-all "todos"))])
+
+(def list-form
+  [:div (form/form-to [:post "/lists"]
+                      (form/label "list" "Create a New List")
+                      [:br]
+                      (form/text-field "list")
+                      (form/submit-button "Create List"))])
 
 (defn lists-index []
   [:div
@@ -84,4 +100,5 @@
         todos (db/todos-for-list id)]
     [:div
      [:h2 (:name list)]
+     (list-todo-form list)
      (todos-list todos)]))
