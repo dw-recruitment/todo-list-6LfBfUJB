@@ -16,6 +16,14 @@
                 (db/create-todo body))
               (r/redirect "/"))))
 
+(defn uri-check [request]
+  (let [uri (:uri request)]
+    (if (and (= "/lists/" (subs uri 0 7))
+             (> (count uri) 7))
+      (do (if-let [id (read-string (subs uri 7))]
+            (v/layout (v/lists-show id))))
+      (v/bad-news "Are You Lost?"))))
+
 (defn handler [request]
   (case (:uri request)
     "/" (handle-todos request)
@@ -25,8 +33,10 @@
     "/destroy-todo" (do (if-let [id (read-string (parse-request request "id"))]
                           (db/delete-by-id "todos" id))
                         (r/redirect "/"))
+    "/lists" (v/layout (v/lists-index))
     "/about" (v/layout v/about)
-    "/favicon.ico" (v/bad-news "")))
+    "/favicon.ico" (v/bad-news "")
+    (uri-check request)))
 
 (defn -main [] (do
                  (db/migrate) 

@@ -53,7 +53,7 @@
   (if completed 
     "text-decoration: line-through;" ""))
 
-(defn todos-index []
+(defn todos-list [todos]
   [:div 
    todo-form
    [:ul
@@ -67,3 +67,21 @@
         (form/form-to [:post "/destroy-todo"]
                       (form/hidden-field "id" (:id todo))
                       (form/submit-button "Delete"))]])]])
+
+(defn todos-index []
+  (todos-list (db/query-all "todos")))
+
+(defn lists-index []
+  [:div
+   [:ul
+    (for [list (db/query-all "lists")]
+      [:li
+       [:a {:href (str "/lists/" (:id list))}
+        [:h4 (:name list)]]])]])
+
+(defn lists-show [id]
+  (let [list (db/find-by-id "lists" id)
+        todos (db/todos-for-list id)]
+    [:div
+     [:h2 (:name list)]
+     (todos-list todos)]))
