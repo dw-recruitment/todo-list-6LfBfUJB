@@ -64,7 +64,7 @@
 (defn todos-list [todos]
   [:div 
    [:ul
-    (for [todo (db/query-all "todos")]
+    (for [todo todos]
       [:li
        [:h4 {:style (striker (:completed todo))} (:body todo)
         (form/form-to [:post "/update-todo"]
@@ -81,7 +81,7 @@
    (todos-list (db/query-all "todos"))])
 
 (def list-form
-  [:div (form/form-to [:post "/lists"]
+  [:div (form/form-to [:post "/"]
                       (form/label "list" "Create a New List")
                       [:br]
                       (form/text-field "list")
@@ -89,6 +89,7 @@
 
 (defn lists-index []
   [:div
+   list-form
    [:ul
     (for [list (db/query-all "lists")]
       [:li
@@ -101,4 +102,6 @@
     [:div
      [:h2 (:name list)]
      (list-todo-form list)
-     (todos-list todos)]))
+     (todos-list todos)
+     [:a {:href "/"}
+      [:h3 "back to lists"]]]))
