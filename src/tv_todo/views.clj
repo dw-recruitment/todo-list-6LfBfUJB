@@ -1,5 +1,6 @@
 (ns tv-todo.views
   (:require [hiccup.core :as hic]
+            [hiccup.form :as form]
             [tv-todo.db :as db]))
 
 (defn layout [view]
@@ -36,8 +37,17 @@
    [:h2 "About This Project"]
    [:p "Post-Its are for the weak. Step into the future with this dedicated To Do List PLATFORM!"]])
 
+(def todo-form
+  [:div (form/form-to [:post "/"]
+                      (form/label "todo" "Create a Todo")
+                      [:br]
+                      (form/text-field "todo")
+                      (form/submit-button "Add Todo"))])
+
 (defn todos-index []
-  [:ul
-   (for [todo (db/query-all "todos")]
-     [:li
-      [:h4 (:body todo)]])])
+  [:div 
+   todo-form
+   [:ul
+    (for [todo (db/query-all "todos")]
+      [:li
+       [:h4 (:body todo)]])]])
